@@ -5,15 +5,8 @@
  */
 
 import React, { Component } from 'react';
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from 'react-native';
+import ReactNative, { Animated, Keyboard, StyleSheet, Text, View, TextInput, ScrollView, Platform } from 'react-native';
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 import { Col, Row, Grid } from "react-native-easy-grid";
 
@@ -45,64 +38,152 @@ const instructions = Platform.select({
 // }
 
 // with KeyboardAvoidingView
-// export default class App extends Component<{}> {
-//   render() {
-//     return (
-//     <KeyboardAvoidingView style={{flex: 1, height: '100%' }}>
-//       <Grid>
-//           <Row size={3} style={styles.topSection}>
-//             <Text style={styles.welcome}>Hola mundo 23</Text>
-//           </Row>
-//           <Row size={1}>
-//             <View style={styles.container}>
-//               <TextInput placeholder="Simple test" />
-//               <TextInput placeholder="another input" />
-//             </View>
-//             <View style={{ height: 60 }} />
-//           </Row>
-//       </Grid>
-//     </KeyboardAvoidingView>
-//     );
-//   }
-// }
+//export default class App extends Component<{}> {
+  // render() {
+  //   return (
+  //   <KeyboardAvoidingView style={{flex: 1, height: '100%' }}>
+  //     <Grid>
+  //         <Row size={3} style={styles.topSection}>
+  //           <Text style={styles.welcome}>Hola mundo 23</Text>
+  //         </Row>
+  //         <Row size={1}>
+  //           <View style={styles.container}>
+  //             <TextInput placeholder="Simple test" />
+  //             <TextInput placeholder="another input" />
+  //           </View>
+  //           <View style={{ height: 60 }} />
+  //         </Row>
+  //     </Grid>
+  //   </KeyboardAvoidingView>
+  //   );
+  // }
+//}
 
-export default class App extends Component<{}> {
+export default class App extends Component {
+
+  state = {
+    keyboardHeight: new Animated.Value(0)
+  };
+
+  // animateKeyboardHeight = (toValue, duration) => {
+  //   Animated.timing(
+  //     this.state.keyboardHeight,
+  //     {toValue, duration},
+  //   ).start();
+  // };
+
+  /**
+   * From https://facebook.github.io/react-native/docs/keyboard.html#addlistener
+   * "Note that if you set android:windowSoftInputMode to adjustResize or adjustNothing,
+   * only keyboardDidShow and keyboardDidHide events will available on Android."
+   */
+  componentWillMount() {
+    // if (Platform.OS === "android") {
+    //   this.keyboardShowListener = Keyboard.addListener("keyboardDidShow", ({endCoordinates}) => {
+    //     this.animateKeyboardHeight(endCoordinates.height, 0)
+    //   });
+    //   this.keyboardHideListener = Keyboard.addListener("keyboardDidHide", () => {
+    //     this.animateKeyboardHeight(0, 300)
+    //   })
+    // }
+  }
+
+  scrollToInput = (reactNode) => {
+    this.view.scrollToFocusedInput(reactNode)
+  };
+
+  handleOnFocus = (e) => {
+    if (Platform.OS === "android") {
+      this.scrollToInput(ReactNative.findNodeHandle(e.target))
+    }
+  };
+
   render() {
-    return (
-      <View style={styles.containerr}>
-        <TextInput placeholder="Simple test" />
-        <TextInput placeholder="another input" />
-        <View style={{ height: 60 }} />
+    const spacer = (
+      <View style={styles.spacer}>
+        <Text style={styles.text} numberOfLines={24}>
+          {"Baila como juana la cubana. ".repeat(30)}
+        </Text>
       </View>
+    );
+    return (
+      <KeyboardAwareScrollView
+        ref={ref => this.view = ref}
+        style={styles.container}
+        enableOnAndroid
+        extraHeight={Platform.OS === "android" ? 10 : undefined}
+      >
+        {spacer}
+        <TextInput
+          onFocus={this.handleOnFocus}
+          style={styles.input}
+        />
+        {/*{spacer}*/}
+
+      </KeyboardAwareScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  containerr: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    height: '100%'
-  },
   container: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#F5FCFF',
+    padding: 10,
+    backgroundColor: '#fff',
   },
-  topSection: {
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center'
+  spacer: {
+    minHeight: 500,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  text: {
+    fontFamily: Platform.OS === "android" ? "monospace" : "Courier",
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  input: {
+    borderColor: "grey",
+    borderRadius: 6,
+    borderWidth: 1,
+    padding: 10,
+  }
 });
+
+// export default class App extends Component<{}> {
+//   render() {
+//     return (
+//       <View style={styles.containerr}>
+//         <TextInput placeholder="Simple test" />
+//         <TextInput placeholder="another input" />
+//         <View style={{ height: 60 }} />
+//       </View>
+//     );
+//   }
+// }
+
+// const styles = StyleSheet.create({
+//   containerr: {
+//     flex: 1,
+//     flexDirection: 'column',
+//     justifyContent: 'flex-end',
+//     height: '100%'
+//   },
+//   container: {
+//     flex: 1,
+//     flexDirection: 'column',
+//     backgroundColor: '#F5FCFF',
+//   },
+//   topSection: {
+//     backgroundColor: 'red',
+//     justifyContent: 'center',
+//     alignItems: 'center'
+//   },
+//   welcome: {
+//     fontSize: 20,
+//     textAlign: 'center',
+//     margin: 10,
+//   },
+//   instructions: {
+//     textAlign: 'center',
+//     color: '#333333',
+//     marginBottom: 5,
+//   },
+// });
