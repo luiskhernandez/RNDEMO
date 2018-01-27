@@ -1,3 +1,5 @@
+import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator';
+
 let MyTransition = (index, position) => {
     const inputRange = [index - 1, index, index + 1];
     const outputRange = [.8, 1, 1];
@@ -24,9 +26,15 @@ let TransitionConfiguration = () => {
         // Define scene interpolation, eq. custom transition
         screenInterpolator: (sceneProps) => {
             const {position, scene} = sceneProps;
-            const {index} = scene;
+            const {index, route} = scene;
+            const params = route.params || {}
+            const transition = params.transition || 'default'
 
-            return MyTransition(index, position);
+            return {
+              // list of transitions
+              default: CardStackStyleInterpolator.forHorizontal(sceneProps),
+              customTransition: MyTransition(index, position)
+            }[transition]
         }
     }
 };

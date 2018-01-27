@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default class SceneOne extends Component {
   next = () => {
-    this.props.navigation.navigate('KeyboardIssue')
+    this.props.navigation.navigate('KeyboardIssue', {
+      transition: 'customTransition'
+    })
   }
   render() {
       return (

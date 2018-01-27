@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   topSection: {
-    backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center'
   },
