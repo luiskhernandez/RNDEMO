@@ -1,33 +1,42 @@
 import React , { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
+import { increment } from './actions';
+import styles from './styles';
 
-export default class SceneOne extends Component {
+class SceneOne extends Component {
   next = () => {
     this.props.navigation.navigate('KeyboardIssue', {
       transition: 'customTransition'
     })
   }
   render() {
+    const { counter, increment } = this.props
       return (
           <View style={styles.container}>
-              <Text>{'Scene one'}</Text>
+              <Text> Home {counter }</Text>
+              <TouchableOpacity style={styles.button} onPress={increment} >
+               <Text>Increment</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.button} onPress={() => this.next()} >
-               <Text>go to Scene Two</Text>
+               <Text>Keyboard issue (custom transition)</Text>
               </TouchableOpacity>
           </View>
       )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  button: {
-      alignItems: 'center',
-      backgroundColor: '#DDDDDD',
-      padding: 10
-  },
-})
+function mapStateToProps (state) {
+  return {
+    counter: state.counter,
+  }
+}
+
+const  mapDispatchToProps = {
+  increment
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SceneOne)
